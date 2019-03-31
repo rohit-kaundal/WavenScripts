@@ -15,7 +15,7 @@ import sys
 from google.cloud import storage
 from shutil import copyfile
 import re
-import pandas
+#import pandas
 import urllib3
 import pathlib
 
