@@ -391,7 +391,7 @@ def downloadImage(imageUrl, imgName):
     return
 
 def processProdsForImgs():
-    tmpProdRef = firestoreDb.collection(u'latestprods')
+    tmpProdRef = firestoreDb.collection(u'latestprods').limit(5)
     docs = tmpProdRef.get()
     tmpDoc = []
     if docs:
