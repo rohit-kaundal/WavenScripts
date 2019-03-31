@@ -381,6 +381,9 @@ def downloadImage(imageUrl, imgName):
     # if os.path.isfile(fileName):
     #     return
 
+    if(os.path.exists(fileName)):
+        return
+
     with urllib3.PoolManager() as http:
 
         r = http.request('GET', url)
@@ -391,11 +394,12 @@ def downloadImage(imageUrl, imgName):
     return
 
 def processProdsForImgs():
-    tmpProdRef = firestoreDb.collection(u'latestprods').limit(5)
+    tmpProdRef = firestoreDb.collection(u'latestprods')
     docs = tmpProdRef.get()
     tmpDoc = []
     if docs:
         for doc in docs:
+            # time.sleep(6)
             docJson = doc.to_dict()
             prodName = docJson.get("ProductName", "noprodname")
             prodName = re.sub('[^a-zA-Z0-9 \n\.]', '', prodName)
@@ -409,7 +413,7 @@ def processProdsForImgs():
     # addStrainsFromFile("StrainsSativaSorted.json")
     # backupProds = firestoreDb.collection(u'latestprods')
     # toCollectionRef = firestoreDb.collection(u'prods_backup')
-
+    print("[+] Starting download...")
     for record in tmpDoc:
         # print(f"[=] {record['ProductName']} = {record['imageUrl']}")
         imgUrl = record['imageUrl']
@@ -418,12 +422,17 @@ def processProdsForImgs():
             downloadImage(imgUrl, f"{prodName}.png")
         except Exception as e:
             print(f"[-] Error occured: {e}")
-        
+
+    print("[+] Completed download.")
     print(f"[+] Total records: {len(tmpDoc)}")
 
 def main():
     processProdsForImgs()
+
+    # print(f"Path exists {str(os.path.exists('./ImgDump/1-and-2-lbs-closed-loop-bidirectional-active-dewaxing-extractor-with-recovery-tank.png'))}")
+
     # deleteSativaStrain()
+
 
     # print("[!] Backing up, please wait...")
     # backupCollection(backupProds, toCollectionRef)
